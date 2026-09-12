@@ -1,0 +1,5 @@
+﻿playwright>=1.40.0
+camoufox>=0.3.0
+pydantic>=2.5.0
+fastapi>=0.100.0
+asyncio>=3.4.3
