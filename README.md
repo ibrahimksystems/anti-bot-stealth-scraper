@@ -65,13 +65,3 @@ Bash
 python -m pytest tests/
 License & Support
 Distributed under the MIT License. Developed by ibrahimksystems (ibrahimksystems@duck.com).
-
-
----
-
-Dosyayı güncelledikten sonra PowerShell terminalinden şu komutları sırasıyla çalıştırarak GitHub'a gönderebilirsin:
-
-```powershell
-git add README.md
-git commit -m "docs: fix markdown formatting in README.md"
-git push origin main
