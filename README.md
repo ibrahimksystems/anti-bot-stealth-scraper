@@ -1,67 +1,140 @@
 # Enterprise Anti-Bot Stealth Scraper & Data Pipeline
 
-A production-grade, asynchronous B2B Web Scraping and Data Extraction Engine built with Python 3.12+, Camoufox (Stealth Firefox), Playwright, and Pydantic v2. Designed to reliably bypass sophisticated anti-bot protections (Cloudflare Turnstile, Akamai, Datadome) while maintaining strict schema integrity.
+A production-grade, asynchronous B2B web scraping and data extraction engine built with **Python 3.12+**, **Camoufox**, **Playwright**, and **Pydantic v2**.
+
+Designed for reliable data extraction from modern, anti-bot-protected web applications while maintaining strict schema integrity, resilient execution, and structured output.
 
 ---
 
 ## Key Features
 
-* **Advanced Anti-Bot Evasion:** Powered by `Camoufox` to spoof browser fingerprints, WebGL contexts, TLS handshakes, and human-like cursor movements.
-* **Strict Type Safety & ETL:** Built-in `Pydantic v2` data pipeline ensuring all extracted elements meet strict B2B runtime schema rules.
-* **Asynchronous & Resilient:** Fully `asyncio`-driven browser orchestration with automated exponential backoff retries for 403/429 rate limits.
-* **Dual Format Export:** Clean output serialization to structured JSON and CSV formats out-of-the-box.
-* **Robust Test Coverage:** Integrated `pytest-asyncio` test suite validating both local Pydantic transformation models and live target evasion.
+- **Advanced Browser Automation:** Powered by `Camoufox` and `Playwright` for browser-based data extraction in challenging web environments.
+- **Strict Type Safety & ETL:** Built-in `Pydantic v2` data pipeline ensuring extracted elements conform to defined B2B runtime schemas.
+- **Asynchronous & Resilient:** Fully `asyncio`-driven browser orchestration with automated exponential-backoff retries for `403` and `429` responses.
+- **Dual Format Export:** Structured output serialization to both JSON and CSV.
+- **Robust Test Coverage:** Integrated `pytest-asyncio` test suite for validating Pydantic transformations and target execution workflows.
 
 ---
 
-## Architecture Blueprint
+## Architecture
 
 ```text
-  [ Target Website ]
-          │
-          ▼  (Cloudflare / Datadome Protected)
+[ Target Website ]
+        │
+        ▼
+[ Browser / Anti-Bot Protected Environment ]
+        │
+        ▼
 ┌───────────────────────────────────┐
-│       StealthEngine Module        │  <-- AsyncCamoufox (Firefox Fingerprint Spoofing)
+│       StealthEngine Module        │
+│   AsyncCamoufox / Playwright      │
 └─────────────────┬─────────────────┘
+                  │
                   │ Raw HTML / Response
                   ▼
 ┌───────────────────────────────────┐
-│        ETLPipeline Module         │  <-- Pydantic v2 Schema Validation & Cleaners
+│        ETLPipeline Module         │
+│ Pydantic v2 Schema Validation     │
+│ Data Cleaning & Transformation    │
 └─────────────────┬─────────────────┘
+                  │
                   │ Validated Objects
                   ▼
-      [ JSON / CSV Export ]
+        [ JSON / CSV Export ]
+
+        Technology Stack
+Component	Technology
+Language	Python 3.12+
+Browser Automation	Playwright
+Stealth Browser	Camoufox
+Data Validation	Pydantic v2
+Async Runtime	asyncio
+Data Processing	ETL Pipeline
+Output Formats	JSON / CSV
+Testing	pytest / pytest-asyncio
+
 Quickstart
 1. Prerequisites
 Python 3.12+
-
-Virtual Environment (venv)
-
-2. Installation & Setup
-Bash
-# Clone the repository
+Git
+Virtual environment (venv)
+2. Clone the Repository
 git clone https://github.com/ibrahimksystems/anti-bot-stealth-scraper.git
 cd anti-bot-stealth-scraper
-
-# Activate virtual environment (Windows PowerShell)
+3. Create a Virtual Environment
+Windows PowerShell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
-
-# Install dependencies and fetch stealth browser binaries
+4. Install Dependencies
 pip install -r requirements.txt
-camoufox fetch
-3. Environment Configuration
-Copy .env.example to .env and adjust your execution settings:
 
-Ini, TOML
+Fetch the Camoufox browser binaries:
+
+camoufox fetch
+Environment Configuration
+
+Copy .env.example to .env and configure the execution settings:
+
 HEADLESS=true
 HUMANIZE=true
 MAX_RETRIES=3
 TIMEOUT_SECONDS=30000
-Running Test Suite
-Validate schema parsing and live anti-bot execution:
 
-Bash
+Adjust these values according to your execution environment and target workload.
+
+Running the Test Suite
+
+Run the automated test suite with:
+
 python -m pytest tests/
-License & Support
-Distributed under the MIT License. Developed by ibrahimksystems (ibrahimksystems@duck.com).
+
+The test suite validates schema parsing, data transformation, and the project's browser execution workflows.
+
+Project Structure
+.
+├── ...
+├── tests/
+├── .env.example
+├── requirements.txt
+└── README.md
+Data Pipeline
+
+The extraction workflow follows a structured processing model:
+
+Target Website
+      │
+      ▼
+Browser Automation
+      │
+      ▼
+Raw Data Extraction
+      │
+      ▼
+Pydantic Validation
+      │
+      ▼
+ETL Transformation
+      │
+      ▼
+Structured JSON / CSV
+
+This separation keeps browser interaction, data validation, transformation, and output serialization independently maintainable.
+
+Engineering Focus
+
+The project demonstrates practical engineering patterns for:
+
+Asynchronous browser automation
+Structured web data extraction
+ETL pipeline architecture
+Runtime schema validation
+Resilient retry strategies
+Rate-limit handling
+Structured data serialization
+Automated testing
+Modular Python architecture
+License
+
+Distributed under the MIT License.
+
+Developed by IbrahimK. Systems.
