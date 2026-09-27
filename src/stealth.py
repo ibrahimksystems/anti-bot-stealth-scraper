@@ -1,41 +1,63 @@
-﻿import asyncio
+import asyncio
 import logging
 from typing import Optional, Dict, Any
+from urllib.parse import urlparse
+
 from camoufox.async_api import AsyncCamoufox
+
 from src.config import settings
 
-# Logging configuration
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+)
 logger = logging.getLogger(settings.APP_NAME)
 
 
 class StealthEngine:
-    """
-    Anti-Bot Bypass Browser Engine powered by Camoufox and Playwright.
+    """Authorized browser automation engine for permitted data-extraction targets.
+
+    The engine is safety-by-default: only hosts listed in ALLOWED_HOSTS may be
+    contacted. Anti-bot or access-control bypass is not a project objective.
     """
 
     def __init__(self):
         self.settings = settings
 
+    def validate_target(self, url: str) -> None:
+        """Allow only explicitly configured hosts and HTTP(S) URLs."""
+        parsed = urlparse(url)
+        if parsed.scheme not in {"http", "https"} or not parsed.hostname:
+            raise ValueError("Target must be an absolute HTTP(S) URL.")
+
+        host = parsed.hostname.lower()
+        if host not in self.settings.allowed_hosts():
+            raise PermissionError(
+                f"Target host '{host}' is not in ALLOWED_HOSTS. "
+                "Only authorized targets may be configured."
+            )
+
     async def fetch_page_content(
-        self, 
-        url: str, 
-        wait_selector: Optional[str] = None
+        self,
+        url: str,
+        wait_selector: Optional[str] = None,
     ) -> Dict[str, Any]:
-        """
-        Connects to the specified URL using a stealth browser, circumvents anti-bot measures, 
-        and returns the raw HTML content along with request metadata.
-        """
+        """Fetch a permitted page and return structured browser metadata."""
+        self.validate_target(url)
+
         proxy_config = None
         if self.settings.PROXY_SERVER:
             proxy_config = {"server": self.settings.PROXY_SERVER}
 
         retries = 0
-        backoff = 1.0
-
         while retries <= self.settings.MAX_RETRIES:
             try:
-                logger.info(f"Initiating stealth connection (Attempt {retries + 1}/{self.settings.MAX_RETRIES + 1}): {url}")
+                logger.info(
+                    "Authorized browser request (attempt %s/%s): %s",
+                    retries + 1,
+                    self.settings.MAX_RETRIES + 1,
+                    url,
+                )
 
                 async with AsyncCamoufox(
                     headless=self.settings.HEADLESS,
@@ -44,50 +66,54 @@ class StealthEngine:
                     proxy=proxy_config,
                     locale=self.settings.LOCALE,
                 ) as browser:
-                    
                     page = await browser.new_page()
-                    
-                    # Navigate to target page and wait for DOM content
-                    response = await page.goto(url, timeout=self.settings.TIMEOUT_SECONDS, wait_until="domcontentloaded")
-                    
-                    # Wait for specific selector if specified (e.g., post-captcha resolution element)
+                    response = await page.goto(
+                        url,
+                        timeout=self.settings.TIMEOUT_SECONDS,
+                        wait_until="domcontentloaded",
+                    )
+
                     if wait_selector:
-                        await page.wait_for_selector(wait_selector, timeout=self.settings.TIMEOUT_SECONDS)
+                        await page.wait_for_selector(
+                            wait_selector,
+                            timeout=self.settings.TIMEOUT_SECONDS,
+                        )
 
                     status_code = response.status if response else 0
-
-                    # Check for explicit Anti-Bot blocking status codes
-                    if status_code in [403, 429]:
-                        logger.warning(f"Anti-bot protection triggered! Status Code: {status_code}")
-                        raise Exception(f"Anti-Bot Blocked: HTTP {status_code}")
-
                     content = await page.content()
                     title = await page.title()
 
-                    logger.info(f"Successfully extracted payload. Title: '{title}' | Status: {status_code}")
+                    logger.info(
+                        "Extraction completed. Title: '%s' | Status: %s",
+                        title,
+                        status_code,
+                    )
                     return {
                         "url": url,
                         "status_code": status_code,
                         "title": title,
                         "html": content,
-                        "success": True
+                        "success": 200 <= status_code < 400,
                     }
 
-            except Exception as e:
+            except Exception as exc:
                 retries += 1
                 if retries > self.settings.MAX_RETRIES:
-                    logger.error(f"Maximum retry attempts reached. Error: {str(e)}")
+                    logger.error("Maximum retry attempts reached: %s", exc)
                     return {
                         "url": url,
                         "status_code": 0,
-                        "error": str(e),
-                        "success": False
+                        "error": str(exc),
+                        "success": False,
                     }
-                
-                sleep_time = backoff * (self.settings.BACKOFF_FACTOR ** (retries - 1))
-                logger.info(f"Request failed, retrying in {sleep_time} seconds... (Reason: {str(e)})")
+
+                sleep_time = self.settings.BACKOFF_FACTOR ** (retries - 1)
+                logger.info(
+                    "Request failed; retrying in %.1f seconds: %s",
+                    sleep_time,
+                    exc,
+                )
                 await asyncio.sleep(sleep_time)
 
 
-# Singleton instance for global scope
 stealth_engine = StealthEngine()

@@ -1,140 +1,135 @@
-# Enterprise Anti-Bot Stealth Scraper & Data Pipeline
+# Enterprise Authorized Web Data Extraction & ETL Engine
 
-A production-grade, asynchronous B2B web scraping and data extraction engine built with **Python 3.12+**, **Camoufox**, **Playwright**, and **Pydantic v2**.
+A production-oriented asynchronous Python data-extraction and ETL architecture for targets that the operator is authorized or legally permitted to access.
 
-Designed for reliable data extraction from modern, anti-bot-protected web applications while maintaining strict schema integrity, resilient execution, and structured output.
+> **Important:** This project is not intended to defeat, circumvent, or weaken third-party security or access controls. The included demonstration runs against a local test target. Configure additional hosts only where you have explicit authorization.
 
----
+## Engineering capabilities
 
-## Key Features
-
-- **Advanced Browser Automation:** Powered by `Camoufox` and `Playwright` for browser-based data extraction in challenging web environments.
-- **Strict Type Safety & ETL:** Built-in `Pydantic v2` data pipeline ensuring extracted elements conform to defined B2B runtime schemas.
-- **Asynchronous & Resilient:** Fully `asyncio`-driven browser orchestration with automated exponential-backoff retries for `403` and `429` responses.
-- **Dual Format Export:** Structured output serialization to both JSON and CSV.
-- **Robust Test Coverage:** Integrated `pytest-asyncio` test suite for validating Pydantic transformations and target execution workflows.
-
----
+- Async browser automation with Playwright/Camoufox
+- Strict Pydantic v2 runtime validation
+- ETL-style transformation from raw browser payloads to typed records
+- JSON and CSV serialization
+- Bounded retry/backoff handling for transient failures
+- Safety-by-default target allowlist
+- Automated unit/integration tests
+- Reproducible local demonstration
 
 ## Architecture
 
 ```text
-[ Target Website ]
-        │
-        ▼
-[ Browser / Anti-Bot Protected Environment ]
-        │
-        ▼
-┌───────────────────────────────────┐
-│       StealthEngine Module        │
-│   AsyncCamoufox / Playwright      │
-└─────────────────┬─────────────────┘
-                  │
-                  │ Raw HTML / Response
-                  ▼
-┌───────────────────────────────────┐
-│        ETLPipeline Module         │
-│ Pydantic v2 Schema Validation     │
-│ Data Cleaning & Transformation    │
-└─────────────────┬─────────────────┘
-                  │
-                  │ Validated Objects
-                  ▼
-        [ JSON / CSV Export ]
+Authorized / Local Test Target
+          |
+          v
+  Async Browser Engine
+          |
+          v
+     Raw HTML + Metadata
+          |
+          v
+   Pydantic Validation
+          |
+          v
+     ETL Transformation
+          |
+          v
+     JSON / CSV Output
+```
 
-        Technology Stack
-Component	Technology
-Language	Python 3.12+
-Browser Automation	Playwright
-Stealth Browser	Camoufox
-Data Validation	Pydantic v2
-Async Runtime	asyncio
-Data Processing	ETL Pipeline
-Output Formats	JSON / CSV
-Testing	pytest / pytest-asyncio
+## Technology stack
 
-Quickstart
-1. Prerequisites
-Python 3.12+
-Git
-Virtual environment (venv)
-2. Clone the Repository
-git clone https://github.com/ibrahimksystems/anti-bot-stealth-scraper.git
-cd anti-bot-stealth-scraper
-3. Create a Virtual Environment
-Windows PowerShell
+| Component | Technology |
+|---|---|
+| Language | Python 3.12+ |
+| Browser automation | Playwright / Camoufox |
+| Validation | Pydantic v2 |
+| Settings | pydantic-settings |
+| Async runtime | asyncio |
+| Testing | pytest / pytest-asyncio |
+| Output | JSON / CSV |
+
+## Setup — Windows PowerShell
+
+```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
-4. Install Dependencies
-pip install -r requirements.txt
-
-Fetch the Camoufox browser binaries:
-
+python -m pip install -r requirements.txt
 camoufox fetch
-Environment Configuration
+```
 
-Copy .env.example to .env and configure the execution settings:
+Create your local configuration:
 
-HEADLESS=true
-HUMANIZE=true
-MAX_RETRIES=3
-TIMEOUT_SECONDS=30000
+```powershell
+Copy-Item .env.example .env
+```
 
-Adjust these values according to your execution environment and target workload.
+The default `.env.example` allows only `localhost` and `127.0.0.1`.
 
-Running the Test Suite
+## Automated tests
 
-Run the automated test suite with:
+```powershell
+python -m pytest
+```
 
-python -m pytest tests/
+The suite covers schema validation, target allowlisting, and JSON/CSV exports without contacting third-party websites.
 
-The test suite validates schema parsing, data transformation, and the project's browser execution workflows.
+## Local end-to-end demo
 
-Project Structure
+The demo starts a small HTTP server on `127.0.0.1:8765`, opens it through the browser engine, validates the response, and writes JSON/CSV output.
+
+```powershell
+python -m demo.run_local_demo
+```
+
+Expected high-level result:
+
+```text
+PHASE 4 LOCAL DEMO: PASS
+Target: http://127.0.0.1:8765/
+HTTP status: 200
+...
+```
+
+Generated demo output is written under `demo/output/` and should not be committed.
+
+## Authorized targets
+
+The browser engine enforces an explicit `ALLOWED_HOSTS` list. For a system you are authorized to access, add its hostname to `.env` deliberately, for example:
+
+```text
+ALLOWED_HOSTS=localhost,127.0.0.1,authorized.example.com
+```
+
+Only use targets where you have the necessary permission and where applicable comply with the target's terms, robots directives, contractual restrictions, rate limits, and applicable law.
+
+The project does not provide instructions for bypassing CAPTCHAs, access controls, rate limits, WAF protections, or other security mechanisms.
+
+## Project structure
+
+```text
 .
-├── ...
+├── demo/
+│   ├── local_target.py
+│   └── run_local_demo.py
+├── src/
+│   ├── config.py
+│   ├── pipeline.py
+│   └── stealth.py
 ├── tests/
+│   └── test_pipeline.py
 ├── .env.example
-├── requirements.txt
-└── README.md
-Data Pipeline
+├── LICENSE
+├── README.md
+├── pytest.ini
+└── requirements.txt
+```
 
-The extraction workflow follows a structured processing model:
+## Engineering focus
 
-Target Website
-      │
-      ▼
-Browser Automation
-      │
-      ▼
-Raw Data Extraction
-      │
-      ▼
-Pydantic Validation
-      │
-      ▼
-ETL Transformation
-      │
-      ▼
-Structured JSON / CSV
+This repository demonstrates modular Python engineering around browser automation, asynchronous execution, schema validation, ETL processing, resilient error handling, and structured data serialization. The local demo provides a deterministic target so the architecture can be demonstrated without relying on an external website or attempting to circumvent its controls.
 
-This separation keeps browser interaction, data validation, transformation, and output serialization independently maintainable.
+## License
 
-Engineering Focus
+MIT License. See `LICENSE`.
 
-The project demonstrates practical engineering patterns for:
-
-Asynchronous browser automation
-Structured web data extraction
-ETL pipeline architecture
-Runtime schema validation
-Resilient retry strategies
-Rate-limit handling
-Structured data serialization
-Automated testing
-Modular Python architecture
-License
-
-Distributed under the MIT License.
-
-Developed by IbrahimK. Systems.
+Developed by **Ibrahim K. Systems**.
