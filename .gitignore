@@ -217,4 +217,12 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
+<<<<<<< HEAD
 demo/output/
+=======
+# Phase 4 local demo artifacts
+demo/output/
+demo/__pycache__/
+__pycache__/
+*.pyc
+>>>>>>> ed9713b75295699be7d51fa65d7a3eb581dece97

@@ -2,7 +2,11 @@ import csv
 import json
 import logging
 from pathlib import Path
+<<<<<<< HEAD
 from typing import Any
+=======
+from typing import Any, Dict, List, Optional
+>>>>>>> ed9713b75295699be7d51fa65d7a3eb581dece97
 
 from pydantic import BaseModel, Field, HttpUrl, field_validator
 
@@ -23,7 +27,11 @@ class ExtractedItemSchema(BaseModel):
     status_code: int = Field(..., ge=200, le=599)
     content_length: int = Field(default=0, ge=0)
     success: bool = True
+<<<<<<< HEAD
     extracted_at: str | None = None
+=======
+    extracted_at: Optional[str] = None
+>>>>>>> ed9713b75295699be7d51fa65d7a3eb581dece97
 
     @field_validator("title")
     @classmethod
@@ -41,7 +49,13 @@ class ETLPipeline:
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
+<<<<<<< HEAD
     def process_raw_payload(self, raw_data: dict[str, Any]) -> ExtractedItemSchema | None:
+=======
+    def process_raw_payload(
+        self, raw_data: Dict[str, Any]
+    ) -> Optional[ExtractedItemSchema]:
+>>>>>>> ed9713b75295699be7d51fa65d7a3eb581dece97
         try:
             html_content = raw_data.get("html", "")
             payload = {
@@ -64,7 +78,11 @@ class ETLPipeline:
 
     async def export_to_json(
         self,
+<<<<<<< HEAD
         items: list[ExtractedItemSchema],
+=======
+        items: List[ExtractedItemSchema],
+>>>>>>> ed9713b75295699be7d51fa65d7a3eb581dece97
         filename: str = "extracted_data.json",
     ) -> Path:
         file_path = self.output_dir / filename
@@ -76,7 +94,11 @@ class ETLPipeline:
 
     async def export_to_csv(
         self,
+<<<<<<< HEAD
         items: list[ExtractedItemSchema],
+=======
+        items: List[ExtractedItemSchema],
+>>>>>>> ed9713b75295699be7d51fa65d7a3eb581dece97
         filename: str = "extracted_data.csv",
     ) -> Path:
         file_path = self.output_dir / filename

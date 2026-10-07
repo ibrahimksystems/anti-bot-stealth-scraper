@@ -1,6 +1,10 @@
 import asyncio
 import logging
+<<<<<<< HEAD
 from typing import Any
+=======
+from typing import Optional, Dict, Any
+>>>>>>> ed9713b75295699be7d51fa65d7a3eb581dece97
 from urllib.parse import urlparse
 
 from camoufox.async_api import AsyncCamoufox
@@ -40,8 +44,13 @@ class StealthEngine:
     async def fetch_page_content(
         self,
         url: str,
+<<<<<<< HEAD
         wait_selector: str | None = None,
     ) -> dict[str, Any]:
+=======
+        wait_selector: Optional[str] = None,
+    ) -> Dict[str, Any]:
+>>>>>>> ed9713b75295699be7d51fa65d7a3eb581dece97
         """Fetch a permitted page and return structured browser metadata."""
         self.validate_target(url)
 
@@ -115,6 +124,7 @@ class StealthEngine:
                 )
                 await asyncio.sleep(sleep_time)
 
+<<<<<<< HEAD
         return {
             "url": url,
             "status_code": 0,
@@ -124,3 +134,7 @@ class StealthEngine:
 
 
 stealth_engine = StealthEngine()
+=======
+
+stealth_engine = StealthEngine()
+>>>>>>> ed9713b75295699be7d51fa65d7a3eb581dece97

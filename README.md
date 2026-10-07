@@ -1,7 +1,10 @@
 # Enterprise Authorized Web Data Extraction & ETL Engine
 
+<<<<<<< HEAD
 ![CI & Code Quality](https://github.com/Ibrahimksystems/anti-bot-stealth-scraper/actions/workflows/ci.yml/badge.svg)
 
+=======
+>>>>>>> ed9713b75295699be7d51fa65d7a3eb581dece97
 A production-oriented asynchronous Python data-extraction and ETL architecture for targets that the operator is authorized or legally permitted to access.
 
 > **Important:** This project is not intended to defeat, circumvent, or weaken third-party security or access controls. The included demonstration runs against a local test target. Configure additional hosts only where you have explicit authorization.

@@ -1,3 +1,8 @@
+<<<<<<< HEAD
+=======
+from typing import Optional
+
+>>>>>>> ed9713b75295699be7d51fa65d7a3eb581dece97
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -19,7 +24,11 @@ class ScraperSettings(BaseSettings):
     TARGET_OS: str = "windows"
     LOCALE: str = "en-US"
 
+<<<<<<< HEAD
     PROXY_SERVER: str | None = Field(
+=======
+    PROXY_SERVER: Optional[str] = Field(
+>>>>>>> ed9713b75295699be7d51fa65d7a3eb581dece97
         default=None,
         description="Operator-controlled proxy for an authorized environment.",
     )
@@ -34,7 +43,15 @@ class ScraperSettings(BaseSettings):
     ALLOWED_HOSTS: str = "localhost,127.0.0.1"
 
     def allowed_hosts(self) -> set[str]:
+<<<<<<< HEAD
         return {host.strip().lower() for host in self.ALLOWED_HOSTS.split(",") if host.strip()}
+=======
+        return {
+            host.strip().lower()
+            for host in self.ALLOWED_HOSTS.split(",")
+            if host.strip()
+        }
+>>>>>>> ed9713b75295699be7d51fa65d7a3eb581dece97
 
 
 settings = ScraperSettings()

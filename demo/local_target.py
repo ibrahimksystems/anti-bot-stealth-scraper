@@ -5,6 +5,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 class DemoHandler(BaseHTTPRequestHandler):
     def do_GET(self):
+<<<<<<< HEAD
         body = (
             b"<!doctype html>"
             b"<html>"
@@ -15,6 +16,9 @@ class DemoHandler(BaseHTTPRequestHandler):
             b"</body>"
             b"</html>"
         )
+=======
+        body = b"""<!doctype html><html><head><title>IK Systems Local Demo</title></head><body><h1>Authorized Extraction Demo</h1><p>Local test target.</p></body></html>"""
+>>>>>>> ed9713b75295699be7d51fa65d7a3eb581dece97
         self.send_response(200)
         self.send_header("Content-Type", "text/html; charset=utf-8")
         self.send_header("Content-Length", str(len(body)))
