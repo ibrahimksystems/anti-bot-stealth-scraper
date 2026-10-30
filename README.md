@@ -1,3 +1,5 @@
+# Authorized Data Extraction and ETL
+
 ![CI & Code Quality](https://github.com/Ibrahimksystems/anti-bot-stealth-scraper/actions/workflows/ci.yml/badge.svg)
 
 A production-oriented asynchronous Python data-extraction and ETL architecture for targets that the operator is authorized or legally permitted to access.
@@ -39,7 +41,6 @@ Authorized / Local Test Target
 ## Technology stack
 
 | Component | Technology |
-|---|---|
 | Language | Python 3.12+ |
 | Browser automation | Playwright / Camoufox |
 | Validation | Pydantic v2 |
