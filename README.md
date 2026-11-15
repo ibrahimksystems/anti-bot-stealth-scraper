@@ -1,136 +1,88 @@
-# Authorized Data Extraction and ETL
+## Anti-Bot Stealth Scraper
+Production-ready web scraper with advanced anti-detection capabilities, built for reliability and scale.
 
-![CI & Code Quality](https://github.com/Ibrahimksystems/anti-bot-stealth-scraper/actions/workflows/ci.yml/badge.svg)
+## Features
+**TLS Fingerprinting** - JA3/JA4 spoofing via Camoufox
+**Proxy Rotation** - Automatic rotation with health checks
+**User-Agent Rotation** - Real browser UA strings
+**Rate Limiting** - Configurable delays between requests
+**Error Handling** - Robust retry logic with exponential backoff
+**Headless Browsing** - Playwright-based rendering
+**Stealth Mode** - Anti-bot detection evasion
+**Data Validation** - Pydantic v2 models for structured output
+**CLI Interface** - Easy command-line usage
 
-A production-oriented asynchronous Python data-extraction and ETL architecture for targets that the operator is authorized or legally permitted to access.
+**Installation**
 
-> **Important:** This project is not intended to defeat, circumvent, or weaken third-party security or access controls. The included demonstration runs against a local test target. Configure additional hosts only where you have explicit authorization.
+# Clone the repository
+git clone https://github.com/ibrahimksystems/anti-bot-stealth-scraper.git
+cd anti-bot-stealth-scraper
 
-## Engineering capabilities
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-- Async browser automation with Playwright/Camoufox
-- Strict Pydantic v2 runtime validation
-- ETL-style transformation from raw browser payloads to typed records
-- JSON and CSV serialization
-- Bounded retry/backoff handling for transient failures
-- Safety-by-default target allowlist
-- Automated unit/integration tests
-- Reproducible local demonstration
+# Install dependencies
+pip install -r requirements.txt
 
-## Architecture
 
-```text
-Authorized / Local Test Target
-          |
-          v
-  Async Browser Engine
-          |
-          v
-     Raw HTML + Metadata
-          |
-          v
-   Pydantic Validation
-          |
-          v
-     ETL Transformation
-          |
-          v
-     JSON / CSV Output
-```
+**Quick Start**
 
-## Technology stack
+# Basic scraping
+python -m src.cli scrape --url https://example.com
 
-| Component | Technology |
-| Language | Python 3.12+ |
-| Browser automation | Playwright / Camoufox |
-| Validation | Pydantic v2 |
-| Settings | pydantic-settings |
-| Async runtime | asyncio |
-| Testing | pytest / pytest-asyncio |
-| Output | JSON / CSV |
+# With proxy rotation
+python -m src.cli scrape --url https://example.com --proxy-list proxies.txt
 
-## Setup — Windows PowerShell
+# Stealth mode with TLS fingerprinting
+python -m src.cli scrape --url https://example.com --stealth --tls-spoof
 
-```powershell
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install -r requirements.txt
-camoufox fetch
-```
+**Configuration**
+Environment variables (see .env.example):
 
-Create your local configuration:
+**PROXY_LIST** - Path to proxy list file
+**USER_AGENTS** - Path to user agents file
+**REQUEST_DELAY** - Delay between requests (seconds)
+**MAX_RETRIES** - Maximum retry attempts
 
-```powershell
-Copy-Item .env.example .env
-```
+Testing
+# Run unit tests
+pytest tests/
 
-The default `.env.example` allows only `localhost` and `127.0.0.1`.
+# Run E2E demo
+python demo/run_local_demo.py
 
-## Automated tests
 
-```powershell
-python -m pytest
-```
+**Project Structure**
+anti-bot-stealth-scraper/
+├── src/                  # Main source code
+│   ├── cli.py            # Command-line interface
+│   ├── config.py         # Configuration management
+│   ├── pipeline.py       # Scraping pipeline
+│   ├── proxy_manager.py  # Proxy rotation logic
+│   ├── security.py       # TLS/JA3 fingerprinting
+│   └── stealth.py        # Anti-detection measures
+├── tests/                # Unit tests
+├── demo/                 # E2E demo scripts
+├── scripts/              # Utility scripts
+└── docs/                 # Documentation
 
-The suite covers schema validation, target allowlisting, and JSON/CSV exports without contacting third-party websites.
 
-## Local end-to-end demo
+**CI/CD**
+This project uses GitHub Actions for continuous integration:
 
-The demo starts a small HTTP server on `127.0.0.1:8765`, opens it through the browser engine, validates the response, and writes JSON/CSV output.
+**Linting**: Ruff
+**Type Checking**: Mypy
+**Testing**: Pytest
+**E2E Demo**: Local target scraping
 
-```powershell
-python -m demo.run_local_demo
-```
+**License**
+MIT License - See LICENSE for details.
 
-Expected high-level result:
+**Contributing**
+Contributions are welcome! Please:
 
-```text
-PHASE 4 LOCAL DEMO: PASS
-Target: http://127.0.0.1:8765/
-HTTP status: 200
-...
-```
-
-Generated demo output is written under `demo/output/` and should not be committed.
-
-## Authorized targets
-
-The browser engine enforces an explicit `ALLOWED_HOSTS` list. For a system you are authorized to access, add its hostname to `.env` deliberately, for example:
-
-```text
-ALLOWED_HOSTS=localhost,127.0.0.1,authorized.example.com
-```
-
-Only use targets where you have the necessary permission and where applicable comply with the target's terms, robots directives, contractual restrictions, rate limits, and applicable law.
-
-The project does not provide instructions for bypassing CAPTCHAs, access controls, rate limits, WAF protections, or other security mechanisms.
-
-## Project structure
-
-```text
-.
-├── demo/
-│   ├── local_target.py
-│   └── run_local_demo.py
-├── src/
-│   ├── config.py
-│   ├── pipeline.py
-│   └── stealth.py
-├── tests/
-│   └── test_pipeline.py
-├── .env.example
-├── LICENSE
-├── README.md
-├── pytest.ini
-└── requirements.txt
-```
-
-## Engineering focus
-
-This repository demonstrates modular Python engineering around browser automation, asynchronous execution, schema validation, ETL processing, resilient error handling, and structured data serialization. The local demo provides a deterministic target so the architecture can be demonstrated without relying on an external website or attempting to circumvent its controls.
-
-## License
-
-MIT License. See `LICENSE`.
-
-Developed by **Ibrahim K. Systems**.
+1-Fork the repository
+2-Create a feature branch
+3-Write tests for new features
+4-Submit a pull request
